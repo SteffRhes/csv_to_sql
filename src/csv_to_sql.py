@@ -6,7 +6,7 @@ CHECK_DELIMITERS = [",", ";", "\t"]
 CHECK_SAMPLE_LIMIT = 100
 CSV_FILE = "test1.csv"
 DATA_ID = CSV_FILE.split(".csv")[0]
-SHOULD_READ_HEADER = True
+SHOULD_READ_HEADER = False
 
 
 def sanitize_name(name):
