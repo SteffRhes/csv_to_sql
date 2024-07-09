@@ -1,12 +1,16 @@
 import csv
+import sys
 import sqlite3
+
+
+csv.field_size_limit(sys.maxsize)
 
 
 CHECK_DELIMITERS = [",", ";", "\t"]
 CHECK_SAMPLE_LIMIT = 100
-CSV_FILE = "test1.csv"
+CSV_FILE = "test.csv"
 DATA_ID = CSV_FILE.split(".csv")[0]
-SHOULD_READ_HEADER = False
+SHOULD_READ_HEADER = True
 
 
 def sanitize_name(name):
@@ -20,7 +24,6 @@ def get_delimiter():
                 break
             for delimiter, delimiter_count_rows in delimiter_count_all.items():
                 count = row.count(delimiter)
-                # TODO: what about files where there is only one column and no delimiter?
                 if count != 0:
                     delimiter_count_rows[count] = delimiter_count_rows.get(count, 0) + 1
                     delimiter_count_all[delimiter] = delimiter_count_rows
@@ -70,17 +73,16 @@ with open(CSV_FILE, "r") as f:
                 continue
 
         col_number_diff = max_col_len - len(row)
-
         if col_number_diff > 0:
             for i in range(col_number_diff):
                 row.append(None)
-
         elif col_number_diff < 0:
             for i in range(max_col_len, len(row)):
                 conn.cursor().execute(f"ALTER TABLE {table_name} ADD COLUMN col_{i}")
             max_col_len = len(row)
 
-        place_holder = ("?, " * max_col_len)[:-2]
+        place_holder = "?, " * max_col_len
+        place_holder = place_holder[:-2]
 
         conn.cursor().execute(f"INSERT INTO {table_name} VALUES ({place_holder})", row)
 
