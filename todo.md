@@ -1,6 +1,5 @@
 
 high:
-- convert to types where possible
 - handle cli arguments
   - should read header
   - which file(s)?
