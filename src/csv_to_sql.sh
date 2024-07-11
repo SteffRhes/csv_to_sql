@@ -21,7 +21,7 @@ else
   # file handling
   csv_file="$1"
   db_name="${csv_file%.*}"
-  db_file="$db_name".sqlite
+  db_file="$db_name"_db.sqlite
   db_history_file="$db_name"_history.txt
   shift 1
 
@@ -38,6 +38,10 @@ else
     fi
   done
 
+fi
+
+if [[ "$should_persist" -eq 0 ]]; then
+  rm "$db_file" "$db_history_file" 2> /dev/null
 fi
 
 if ! [ -e "$db_file" ]; then
