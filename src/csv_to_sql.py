@@ -17,6 +17,7 @@ CHECK_SAMPLE_LIMIT = 100
 
 def handle_args():
 
+    # define args
     parser = argparse.ArgumentParser()
     parser.add_argument("csv_file")
     parser.add_argument("db_file")
@@ -24,6 +25,7 @@ def handle_args():
     parser.add_argument("should_skip_headers", type=int)
     args = parser.parse_args()
 
+    # read args into variables
     global CSV_FILE
     global DB_FILE
     global DB_NAME
@@ -35,6 +37,9 @@ def handle_args():
         SHOULD_SKIP_HEADERS = False
     elif args.should_skip_headers == 1:
         SHOULD_SKIP_HEADERS = True
+    print(f"CSV_FILE: {CSV_FILE}")
+    print(f"DB_FILE: {DB_FILE}")
+    print(f"SHOULD_SKIP_HEADERS: {SHOULD_SKIP_HEADERS}")
 
 
 def sanitize_name(name):
@@ -85,6 +90,7 @@ def cast_to_types(row):
 
 
 def main():
+    print("loading csv/tsv into db")
     handle_args()
     with open(CSV_FILE, "r") as f:
 
@@ -121,7 +127,7 @@ def main():
                     conn.cursor().execute(f"ALTER TABLE {table_name} ADD COLUMN col_{i}")
                 max_col_len = len(row)
 
-            # handle types and write
+            # handle types and write to db
             row = cast_to_types(row)
             place_holder = "?, " * max_col_len
             place_holder = place_holder[:-2]
@@ -130,6 +136,8 @@ def main():
         # finalize
         conn.commit()
         conn.close()
+
+    print("done with loading csv/tsv into db")
 
 
 if __name__ == "__main__":
